@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.masselis.tpmsadvanced.core.common.appContext
 import com.masselis.tpmsadvanced.data.vehicle.model.Vehicle
+import com.masselis.tpmsadvanced.feature.background.interfaces.BackgroundPreferences
 import com.masselis.tpmsadvanced.feature.background.interfaces.MonitorService
 import com.masselis.tpmsadvanced.feature.background.interfaces.MonitorService.Companion.intent
 import kotlinx.coroutines.channels.Channel
@@ -25,7 +26,8 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 internal class BackgroundViewModel(
-    vehicle: Vehicle,
+    private val vehicle: Vehicle,
+    private val backgroundPreferences: BackgroundPreferences,
 ) : ViewModel() {
 
     sealed interface State : Parcelable {
@@ -61,12 +63,14 @@ internal class BackgroundViewModel(
         if (SDK_INT >= TIRAMISU)
             require(checkSelfPermission(appContext, POST_NOTIFICATIONS) == PERMISSION_GRANTED)
         startForegroundService(appContext, serviceIntent)
+        backgroundPreferences.setMonitoringEnabled(vehicle.uuid, true)
         channel.send(Event.FinishActivity)
     }
 
     fun disableMonitoring() = viewModelScope.launch {
         require(stateFlow.value is State.Monitoring)
         appContext.stopService(serviceIntent)
+        backgroundPreferences.setMonitoringEnabled(vehicle.uuid, false)
     }
 
     private fun computeState(isServiceRunning: Boolean) =

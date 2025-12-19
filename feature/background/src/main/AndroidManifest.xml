@@ -23,5 +23,15 @@
             android:exported="false"
             android:foregroundServiceType="connectedDevice" />
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="com.masselis.tpmsadvanced.feature.background.interfaces.FeatureBackgroundInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
     </application>
 </manifest>
