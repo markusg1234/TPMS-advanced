@@ -22,10 +22,12 @@ import kotlinx.coroutines.launch
 
 public class FeatureBackgroundInitializer : Initializer<Unit> {
     override fun create(context: Context) {
+        // Note: We create BackgroundPreferences here instead of using DI because
+        // the DI system may not be fully initialized at this point in the app lifecycle
         val backgroundPreferences = BackgroundPreferences(context)
         
         // Use a coroutine to restore monitoring state for vehicles
-        CoroutineScope(SupervisorJob() + Dispatchers.Main).launch {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             // Get the list of all vehicles
             val vehicles = DataVehicleComponent.vehicleDatabase
                 .selectAll()
