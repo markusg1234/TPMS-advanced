@@ -165,7 +165,7 @@ internal class ServiceNotifier(
                                     getBroadcast(
                                         appContext,
                                         vehicle.uuid.hashCode(),
-                                        DisableMonitorBroadcastReceiver.intent(),
+                                        DisableMonitorBroadcastReceiver.intent(vehicle.uuid),
                                         FLAG_IMMUTABLE
                                     )
                                 ).build()
